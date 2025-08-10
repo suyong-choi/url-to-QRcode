@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <!--
+      Load Tailwind CSS for modern styling and a responsive layout.
+      This script tag is from the official Tailwind CDN.
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Set up a custom color palette and extend the default Tailwind theme
+      // to make the app look good.
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'primary': '#4F46E5',
+              'secondary': '#6366F1',
+              'light': '#E0E7FF',
+              'dark': '#1F2937',
+              'background': '#F3F4F6',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+          }
+        }
+      }
+    </script>
+    <style>
+      /* Apply smooth transitions to all elements */
+      * {
+        transition: all 0.3s ease-in-out;
+      }
+    </style>
+</head>
+<body class="bg-background font-sans text-dark min-h-screen flex items-center justify-center p-4">
+    <!-- Main container for the application, centered on the screen -->
+    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full flex flex-col items-center gap-6 transform hover:scale-105 duration-300">
+        <!-- Application title -->
+        <h1 class="text-3xl sm:text-4xl font-bold text-primary text-center">QR Code Generator</h1>
+
+        <!-- Subheading to guide the user -->
+        <p class="text-center text-gray-600">Enter a URL below to generate a QR code.</p>
+
+        <!-- Input field for the URL with focus and hover effects -->
+        <input
+            type="text"
+            id="url-input"
+            class="w-full p-3 sm:p-4 rounded-xl border-2 border-light text-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+            placeholder="e.g., https://www.google.com"
+        />
+
+        <!-- Button to trigger the QR code generation -->
+        <button
+            id="generate-btn"
+            class="w-full bg-primary text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all transform hover:scale-105 active:scale-95"
+        >
+            Generate QR Code
+        </button>
+
+        <!-- Container where the QR code will be displayed -->
+        <div id="qrcode-container" class="mt-4 p-4 rounded-xl border-4 border-dashed border-light flex justify-center items-center h-64 w-64 md:h-80 md:w-80">
+            <p id="placeholder-text" class="text-gray-400 text-center text-sm">Your QR code will appear here</p>
+        </div>
+    </div>
+
+    <!--
+      Load the qrcode.js library. This library handles the heavy lifting
+      of converting a string into a QR code canvas or image element.
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <!-- JavaScript logic for the app -->
+    <script>
+        // Get references to the HTML elements
+        const urlInput = document.getElementById('url-input');
+        const generateBtn = document.getElementById('generate-btn');
+        const qrcodeContainer = document.getElementById('qrcode-container');
+        const placeholderText = document.getElementById('placeholder-text');
+
+        // Add a click event listener to the "Generate" button
+        generateBtn.addEventListener('click', () => {
+            // Get the URL from the input field
+            const url = urlInput.value.trim();
+
+            // Clear the previous QR code and placeholder text
+            qrcodeContainer.innerHTML = '';
+            placeholderText.style.display = 'none';
+
+            // Check if the input is not empty
+            if (url) {
+                // Initialize QRCode instance
+                // 'qrcodeContainer' is the DOM element where the QR code will be rendered
+                // 'url' is the data to encode in the QR code
+                // { width, height } are optional dimensions for the QR code image
+                new QRCode(qrcodeContainer, {
+                    text: url,
+                    width: 256,
+                    height: 256,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H // Highest error correction level
+                });
+            } else {
+                // If the input is empty, show a message to the user
+                placeholderText.textContent = 'Please enter a valid URL.';
+                placeholderText.style.display = 'block';
+            }
+        });
+
+        // Optional: Trigger generation on "Enter" key press in the input field
+        urlInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
